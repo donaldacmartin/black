@@ -41,6 +41,8 @@ public class EpisodeItemTransformer implements Function<SavedEpisode, Item> {
         item.setAuthor(episode.getBroadcast().getStation().getName());
         item.setDuration(minuteTimeTransformer.apply(episode.getBroadcast().getLengthInMinutes()));
         item.setEnclosure(episodeEnclosureTransformer.apply(episode));
+        item.setExplicit(explicit);
+        item.setGuid(episode.getUuid());
 
         return item;
     }

@@ -1,24 +1,28 @@
-package scot.martin.black.controller;
+package scot.martin.black.controller.crud;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import scot.martin.black.entity.Station;
+import scot.martin.black.repository.BroadcastRepository;
 import scot.martin.black.repository.StationRepository;
 import scot.martin.black.request.StationRequest;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping("/station")
-public class StationController {
+public class StationController extends CrudController<Station> {
 
     private static final Logger LOGGER =
             LoggerFactory.getLogger(StationController.class);
@@ -26,16 +30,19 @@ public class StationController {
     @Autowired
     private StationRepository repository;
 
-    @GetMapping
-    public ResponseEntity<List<Station>> get() {
-        LOGGER.info("Request for all stations");
+    @Autowired
+    private BroadcastRepository broadcastRepository;
 
-        List<Station> stations = StreamSupport
-                .stream(repository.findAll().spliterator(), true)
-                .collect(Collectors.toList());
+    @Override
+    protected CrudRepository<Station, String> getRepository() {
+        return repository;
+    }
 
-        LOGGER.info("Returning {} station(s)", stations.size());
-        return ResponseEntity.ok().body(stations);
+    @Override
+    protected Predicate<Station> isDeletable() {
+        return s ->
+                StreamSupport.stream(broadcastRepository.findAll().spliterator(), false)
+                        .noneMatch(b -> b.getStation().equals(s));
     }
 
     @PostMapping
@@ -64,25 +71,6 @@ public class StationController {
         }
 
         return response;
-    }
-
-    @DeleteMapping
-    @RequestMapping("/{uuid}")
-    public ResponseEntity delete(@PathVariable("uuid") String uuid) {
-        LOGGER.info("Request to delete station {}", uuid);
-
-        Optional<Station> station = repository.findById(uuid);
-
-        if (station.isPresent()) {
-            LOGGER.info("Deleted station {}", station.get());
-
-            repository.delete(station.get());
-            return ResponseEntity.noContent().build();
-        } else {
-            LOGGER.info("Station does not exist");
-
-            return ResponseEntity.notFound().build();
-        }
     }
 
 }

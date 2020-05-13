@@ -1,4 +1,4 @@
-package scot.martin.black.controller;
+package scot.martin.black.controller.podcast;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -11,6 +11,9 @@ import scot.martin.black.rss.builder.ChannelRSSTransformer;
 import scot.martin.black.rss.model.Channel;
 import scot.martin.black.rss.model.RSS;
 
+import java.time.ZoneOffset;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -33,6 +36,8 @@ public class PodcastController {
     public RSS get() {
         List<SavedEpisode> episodes = StreamSupport
                 .stream(episodeRepository.findAll().spliterator(), false)
+                .sorted(Comparator.comparingLong(s -> s.getStart().toEpochSecond(ZoneOffset.UTC)))
+                .sorted(Collections.reverseOrder())
                 .collect(Collectors.toList());
 
         return episodeChannelTransformer

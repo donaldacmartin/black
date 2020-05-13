@@ -1,25 +1,29 @@
-package scot.martin.black.controller;
+package scot.martin.black.controller.crud;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import scot.martin.black.entity.Broadcast;
 import scot.martin.black.entity.Station;
 import scot.martin.black.repository.BroadcastRepository;
+import scot.martin.black.repository.SavedEpisodeRepository;
 import scot.martin.black.repository.StationRepository;
 import scot.martin.black.request.BroadcastRequest;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping("/broadcast")
-public class BroadcastController {
+public class BroadcastController extends CrudController<Broadcast> {
 
     private static final Logger LOGGER =
             LoggerFactory.getLogger(BroadcastController.class);
@@ -28,18 +32,22 @@ public class BroadcastController {
     private StationRepository stationRepository;
 
     @Autowired
-    private BroadcastRepository repository;
+    private SavedEpisodeRepository savedEpisodeRepository;
 
-    @GetMapping
-    public ResponseEntity<List<Broadcast>> get() {
-        LOGGER.info("Request for all broadcasts");
+    @Autowired
+    private BroadcastRepository broadcastRepository;
 
-        List<Broadcast> broadcasts = StreamSupport
-                .stream(repository.findAll().spliterator(), true)
-                .collect(Collectors.toList());
+    @Override
+    protected CrudRepository<Broadcast, String> getRepository() {
+        return broadcastRepository;
+    }
 
-        LOGGER.info("Returning {} broadcast(s)", broadcasts.size());
-        return ResponseEntity.ok().body(broadcasts);
+    @Override
+    protected Predicate<Broadcast> isDeletable() {
+        return b ->
+                StreamSupport
+                        .stream(savedEpisodeRepository.findAll().spliterator(), false)
+                        .noneMatch(e -> e.getBroadcast().equals(b));
     }
 
     @PostMapping
@@ -54,33 +62,12 @@ public class BroadcastController {
         if (station.isPresent()) {
             Broadcast broadcast = new Broadcast(request, station.get());
             LOGGER.info("Saving broadcast {}", broadcast);
-            repository.save(broadcast);
+            broadcastRepository.save(broadcast);
             LOGGER.info("Broadcast created {}", broadcast);
             response = ResponseEntity.accepted().body(broadcast);
         } else {
             LOGGER.info("Station UUID is not present");
             response = ResponseEntity.unprocessableEntity().build();
-        }
-
-        return response;
-    }
-
-    @DeleteMapping
-    @RequestMapping("/{uuid}")
-    public ResponseEntity delete(@PathVariable("uuid") String uuid) {
-        LOGGER.info("Request to delete broadcast {}", uuid);
-
-        ResponseEntity response;
-
-        Optional<Broadcast> broadcast = repository.findById(uuid);
-
-        if (broadcast.isPresent()) {
-            repository.delete(broadcast.get());
-            LOGGER.info("Deleted broadcast {}", broadcast.get());
-            response = ResponseEntity.noContent().build();
-        } else {
-            LOGGER.info("Broadcast does not exist");
-            response = ResponseEntity.notFound().build();
         }
 
         return response;
