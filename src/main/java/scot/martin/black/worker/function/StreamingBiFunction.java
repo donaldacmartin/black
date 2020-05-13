@@ -12,8 +12,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -30,7 +30,7 @@ class StreamingBiFunction
     private final TriConsumer<InputStream, OutputStream, Long> ioStreamConsumer;
     private final Consumer<Closeable> closeableConsumer;
     private final Function<File, Long> fileSizeFunction;
-    private final BiConsumer<File, File> fileMoverBiConsumer;
+    private final BinaryOperator<File> fileMoverBinaryOperator;
 
     public StreamingBiFunction() {
         this.tmpFileFunction = new TmpFileFunction();
@@ -40,7 +40,7 @@ class StreamingBiFunction
         this.ioStreamConsumer = new IOStreamConsumer();
         this.closeableConsumer = new CloseableConsumer();
         this.fileSizeFunction = new FileSizeFunction();
-        this.fileMoverBiConsumer = new FileMoverBiConsumer();
+        this.fileMoverBinaryOperator = new FileMoverBinaryOperator();
     }
 
     @Override
@@ -63,8 +63,8 @@ class StreamingBiFunction
                     ioStreamConsumer.accept(is.get(), os.get(), endMillis);
                     Long fileSize = fileSizeFunction.apply(tmpFile.get());
 
-                    fileMoverBiConsumer.accept(tmpFile.get(), destDirectory);
-                    savedEpisode = Optional.of(new SavedEpisode(startTime, tmpFile.get(), fileSize, broadcast));
+                    File movedFile = fileMoverBinaryOperator.apply(tmpFile.get(), destDirectory);
+                    savedEpisode = Optional.of(new SavedEpisode(startTime, movedFile, fileSize, broadcast));
 
                     LOGGER.info("Stream ended for {}", broadcast.getName());
                 } else {
