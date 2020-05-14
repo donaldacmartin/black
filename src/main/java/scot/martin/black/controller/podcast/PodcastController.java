@@ -36,8 +36,7 @@ public class PodcastController {
     public RSS get() {
         List<SavedEpisode> episodes = StreamSupport
                 .stream(episodeRepository.findAll().spliterator(), false)
-                .sorted(Comparator.comparingLong(s -> s.getStart().toEpochSecond(ZoneOffset.UTC)))
-                .sorted(Collections.reverseOrder())
+                .sorted(Collections.reverseOrder(Comparator.comparing(SavedEpisode::getStart)))
                 .collect(Collectors.toList());
 
         return episodeChannelTransformer
