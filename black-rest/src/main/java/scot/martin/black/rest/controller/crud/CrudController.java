@@ -19,8 +19,7 @@ import java.util.stream.StreamSupport;
 
 public abstract class CrudController<A> {
 
-    protected static final Logger LOGGER =
-            LoggerFactory.getLogger(CrudController.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(CrudController.class);
 
     protected abstract CrudRepository<A, String> getRepository();
 

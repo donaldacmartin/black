@@ -15,8 +15,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Service
-public class EpisodeChannelTransformer
-        implements Function<List<SavedEpisode>, Channel> {
+public class EpisodeChannelTransformer implements Function<List<SavedEpisode>, Channel> {
 
     @Value("${podcast.channel.title}")
     private String title;

@@ -8,8 +8,7 @@ import scot.martin.black.rss.model.Enclosure;
 import java.util.function.Function;
 
 @Service
-public class EpisodeEnclosureTransformer
-        implements Function<SavedEpisode, Enclosure> {
+public class EpisodeEnclosureTransformer implements Function<SavedEpisode, Enclosure> {
 
     @Value("${podcast.channel.item.type}")
     private String type;

@@ -25,8 +25,7 @@ import java.util.stream.StreamSupport;
 @RequestMapping("/broadcast")
 public class BroadcastController extends CrudController<Broadcast> {
 
-    private static final Logger LOGGER =
-            LoggerFactory.getLogger(BroadcastController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BroadcastController.class);
 
     @Autowired
     private StationRepository stationRepository;

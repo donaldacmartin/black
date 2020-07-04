@@ -28,8 +28,7 @@ public class SavedEpisode {
     protected SavedEpisode() {
     }
 
-    public SavedEpisode(LocalDateTime start, File location, Long lengthBytes,
-                        Broadcast broadcast) {
+    public SavedEpisode(LocalDateTime start, File location, Long lengthBytes, Broadcast broadcast) {
         this.start = start;
         this.location = location;
         this.lengthBytes = lengthBytes;

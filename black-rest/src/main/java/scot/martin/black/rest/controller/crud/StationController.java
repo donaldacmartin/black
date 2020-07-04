@@ -24,8 +24,7 @@ import java.util.stream.StreamSupport;
 @RequestMapping("/station")
 public class StationController extends CrudController<Station> {
 
-    private static final Logger LOGGER =
-            LoggerFactory.getLogger(StationController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StationController.class);
 
     @Autowired
     private StationRepository repository;
