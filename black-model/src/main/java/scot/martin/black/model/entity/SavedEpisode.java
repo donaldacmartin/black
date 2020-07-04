@@ -11,7 +11,7 @@ public class SavedEpisode {
 
     @Id
     @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
     private String uuid;
 
     private LocalDateTime start;

@@ -15,7 +15,7 @@ public class Station {
 
     @Id
     @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
     private String uuid;
 
     @Column(unique = true)
