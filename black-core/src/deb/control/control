@@ -1,0 +1,8 @@
+Package: black
+Version: [[version]]
+Section: misc
+Priority: low
+Architecture: all
+Description: [[description]]
+Maintainer: Donald Martin <email>
+Depends: default-jre

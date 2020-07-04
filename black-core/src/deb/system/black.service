@@ -1,0 +1,11 @@
+[Unit]
+Description=Radio to podcast service
+
+[Service]
+ExecStart=/usr/bin/java \
+    -jar /usr/share/black/black.jar \
+    --spring.config.location=file:///etc/black/application.properties
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
