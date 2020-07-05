@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Objects;
@@ -33,6 +34,9 @@ public class Broadcast {
     private Boolean isSaturday;
     private Boolean isSunday;
 
+    private LocalDate startDate;
+    private LocalDate endDate;
+
     private Long lengthInMinutes;
 
     @ManyToOne()
@@ -54,6 +58,9 @@ public class Broadcast {
         this.isFriday = request.getDayOfTheWeek().get(4).booleanValue();
         this.isSaturday = request.getDayOfTheWeek().get(5).booleanValue();
         this.isSunday = request.getDayOfTheWeek().get(6).booleanValue();
+
+        this.startDate = request.getStartDate();
+        this.endDate = request.getEndDate();
 
         this.lengthInMinutes = request.getLengthInMinutes();
         this.station = station;
@@ -103,6 +110,14 @@ public class Broadcast {
         return isSunday;
     }
 
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
     public Long getLengthInMinutes() {
         return lengthInMinutes;
     }
@@ -127,6 +142,8 @@ public class Broadcast {
                 Objects.equals(isFriday, broadcast.isFriday) &&
                 Objects.equals(isSaturday, broadcast.isSaturday) &&
                 Objects.equals(isSunday, broadcast.isSunday) &&
+                Objects.equals(startDate, broadcast.startDate) &&
+                Objects.equals(endDate, broadcast.endDate) &&
                 Objects.equals(lengthInMinutes, broadcast.lengthInMinutes) &&
                 Objects.equals(station, broadcast.station);
     }
@@ -135,7 +152,7 @@ public class Broadcast {
     public int hashCode() {
         return Objects.hash(uuid, name, startTime, timezone, isMonday,
                 isTuesday, isWednesday, isThursday, isFriday, isSaturday,
-                isSunday, lengthInMinutes, station);
+                isSunday, startDate, endDate, lengthInMinutes, station);
     }
 
     @Override
@@ -152,6 +169,8 @@ public class Broadcast {
                 ", isFriday=" + isFriday +
                 ", isSaturday=" + isSaturday +
                 ", isSunday=" + isSunday +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
                 ", lengthInMinutes=" + lengthInMinutes +
                 ", station=" + station +
                 '}';

@@ -1,6 +1,13 @@
 package scot.martin.black.model.request;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.List;
@@ -23,6 +30,12 @@ public class BroadcastRequest {
     @NotNull
     @Size(min = 7, max = 7)
     private List<Boolean> dayOfTheWeek;
+
+    @Null
+    private LocalDate startDate;
+
+    @Null
+    private LocalDate endDate;
 
     @NotNull
     @Min(1)
@@ -50,6 +63,14 @@ public class BroadcastRequest {
         return dayOfTheWeek;
     }
 
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
     public Long getLengthInMinutes() {
         return lengthInMinutes;
     }
@@ -67,13 +88,15 @@ public class BroadcastRequest {
                 Objects.equals(startTime, that.startTime) &&
                 Objects.equals(timezone, that.timezone) &&
                 Objects.equals(dayOfTheWeek, that.dayOfTheWeek) &&
+                Objects.equals(startDate, that.startDate) &&
+                Objects.equals(endDate, that.endDate) &&
                 Objects.equals(lengthInMinutes, that.lengthInMinutes) &&
                 Objects.equals(stationUuid, that.stationUuid);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, startTime, timezone, dayOfTheWeek,
+        return Objects.hash(name, startTime, timezone, dayOfTheWeek, startDate, endDate,
                 lengthInMinutes, stationUuid);
     }
 
@@ -84,9 +107,11 @@ public class BroadcastRequest {
                 ", startTime=" + startTime +
                 ", timezone=" + timezone +
                 ", dayOfTheWeek=" + dayOfTheWeek +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
                 ", lengthInMinutes=" + lengthInMinutes +
                 ", stationUuid='" + stationUuid + '\'' +
                 '}';
     }
-    
+
 }
